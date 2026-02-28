@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus | Expert Auto Intelligence</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg: #f5f7f9;
+            --white: #ffffff;
+            --blue: #007bff;
+            --text: #34495e;
+            --gray-sidebar: #ebedf0;
+            --radius-msg: 35px;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            /* APLICAMOS LA NUEVA TIPOGRAFÍA */
+            font-family: 'Inter', sans-serif;
+            display: flex; height: 100vh; margin: 0; overflow: hidden;
+            -webkit-font-smoothing: antialiased; /* Suavizado de bordes */
+            font-weight: 300; /* Letra fina por defecto */
+        }
+
+        /* --- LOGIN NEXUS --- */
+        #login-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg); display: flex; justify-content: center; align-items: center; z-index: 1000;
+        }
+        .login-box {
+            background: var(--white); padding: 60px; border-radius: 50px; 
+            text-align: center; box-shadow: 0 30px 60px rgba(0,0,0,0.05); width: 400px;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+        .login-box h2 { 
+            color: var(--blue); font-weight: 800; letter-spacing: -3px; margin-bottom: 5px;
+            font-size: 3.5rem;
+        }
+        .login-box p { 
+            color: #95a5a6; font-size: 0.8rem; margin-bottom: 30px; 
+            letter-spacing: 2px; font-weight: 400;
+        }
+        
+        .login-box input {
+            width: 100%; padding: 18px; margin-bottom: 20px; border: 1.5px solid #eee; 
+            border-radius: 25px; outline: none; box-sizing: border-box; font-family: 'Inter'; font-weight: 400;
+        }
+        .login-box button {
+            background: var(--blue); color: white; border: none; padding: 18px; 
+            width: 100%; border-radius: 25px; font-weight: 600; cursor: pointer; 
+            transition: all 0.3s ease; font-family: 'Inter';
+        }
+
+        /* --- INTERFAZ PRINCIPAL --- */
+        #sidebar {
+            width: 320px; background: var(--gray-sidebar); border-right: 1px solid #e1e4e8; 
+            display: flex; flex-direction: column; padding: 40px 30px;
+        }
+        .brand-logo { 
+            font-size: 2.5rem; font-weight: 800; color: var(--blue); margin-bottom: 40px; 
+            letter-spacing: -3px;
+        }
+
+        .history-item {
+            padding: 18px; background: var(--white); border-radius: 25px; margin-bottom: 15px; 
+            font-size: 0.8rem; cursor: pointer; transition: 0.3s; font-weight: 400;
+            color: #7f8c8d; border: 1px solid transparent;
+        }
+        .history-item:hover { border-color: var(--blue); color: var(--blue); transform: translateX(5px); }
+
+        /* --- CHAT --- */
+        #main-chat { flex: 1; display: flex; flex-direction: column; align-items: center; }
+        #chat-window { width: 100%; max-width: 900px; display: flex; flex-direction: column; height: 100%; }
+        #history { flex: 1; overflow-y: auto; padding: 50px; display: flex; flex-direction: column; gap: 30px; }
+
+        .message {
+            max-width: 75%; padding: 25px 30px; border-radius: var(--radius-msg); 
+            line-height: 1.8; font-size: 0.95rem; box-shadow: 0 10px 25px rgba(0,0,0,0.02);
+            animation: slideIn 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            font-weight: 300; /* LETRA FINA EN MENSAJES */
+            letter-spacing: 0.2px;
+        }
+
+        .user-message { 
+            align-self: flex-end; background: var(--blue); color: white; 
+            border-bottom-right-radius: 8px; font-weight: 400;
+        }
+        .ai-message { 
+            align-self: flex-start; background: var(--white); border-bottom-left-radius: 8px; 
+            border: 1px solid rgba(0,0,0,0.05); color: #2c3e50;
+        }
+
+        .res-title { 
+            color: var(--blue); font-weight: 800; font-size: 1rem; display: block; 
+            margin-bottom: 12px; letter-spacing: 1px; text-transform: uppercase;
+        }
+
+        /* --- INPUT AREA --- */
+        .input-area { padding: 40px; width: 100%; box-sizing: border-box; }
+        .input-container {
+            background: var(--white); padding: 10px 10px 10px 30px; border-radius: 50px; 
+            border: 1px solid rgba(0,0,0,0.1); display: flex; align-items: center; 
+            gap: 15px; box-shadow: 0 15px 35px rgba(0,0,0,0.04);
+        }
+        input[type="text"] { 
+            flex: 1; background: transparent; border: none; outline: none; 
+            font-size: 0.95rem; font-family: 'Inter'; font-weight: 400;
+        }
+        .btn-send { 
+            background: var(--blue); color: white; border: none; width: 55px; height: 55px; 
+            border-radius: 50%; cursor: pointer; transition: 0.3s;
+        }
+        .btn-send:hover { transform: scale(1.05); background: #0056b3; }
+
+        /* Loader */
+        #loader { display: none; width: 100%; height: 3px; background: #eee; border-radius: 10px; margin: 15px 0; overflow: hidden; }
+        #loader-bar { width: 0%; height: 100%; background: var(--blue); transition: width 2s; }
+        .img-preview { max-width: 100%; border-radius: 30px; margin-top: 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+    </style>
+</head>
+<body>
+    <div id="login-overlay">
+        <div class="login-box">
+            <h2>Nexus</h2>
+            <p>INTELLIGENT AUTO NODE</p>
+            <input type="text" id="username" placeholder="Identificación">
+            <button onclick="login()">ENTRAR AL NODO</button>
+        </div>
+    </div>
+
+    <div id="app-content">
+        <aside id="sidebar">
+            <div class="brand-logo">Nexus</div>
+            <div style="font-weight:600; margin-bottom:30px; font-size: 0.8rem; color: #95a5a6;">ID DE SESIÓN: <span id="display-user" style="color:var(--blue)"></span></div>
+            <h3 style="font-size:0.6rem; color:#bdc3c7; letter-spacing:3px; text-transform: uppercase; margin-bottom: 20px;">Memoria de Sistema</h3>
+            <div id="search-history"></div>
+        </aside>
+
+        <main id="main-chat">
+            <div id="chat-window">
+                <div id="history">
+                    <div class="message ai-message">
+                        <span class="res-title">Nexus Core v2.0</span>
+                        Terminal listo. Tipografía optimizada para lectura técnica. ¿Qué sistema analizamos hoy?
+                        <div id="loader"><div id="loader-bar"></div></div>
+                    </div>
+                </div>
+                <div class="input-area">
+                    <div class="input-container">
+                        <input type="file" id="foto-input" accept="image/*" capture="environment" style="display:none" onchange="procesarCaptura()">
+                        <button onclick="document.getElementById('foto-input').click()" style="background:none; border:none; color:#bdc3c7; font-size:24px; cursor:pointer;">📷</button>
+                        <input type="text" id="pregunta" placeholder="Escribe tu consulta aquí..." onkeypress="if(event.key === 'Enter') consultarIA()">
+                        <button class="btn-send" onclick="consultarIA()">↑</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // ... (Aquí va el mismo código de las funciones login, consultarIA, responder, etc.)
+        // Se puede copiar exactamente igual que en el código de AutoNexus o Nexus anterior.
+        const knowledge = {
+            brands: { "bmw": "BMW: Dinamismo puro y motores 6 en línea.", "toyota": "Toyota: Fiabilidad extrema e hibridación.", "mercedes": "Mercedes: Lujo y seguridad proactiva." },
+            troubles: { "humo": "Humos: Blanco (agua), Azul (aceite), Negro (combustible).", "ruido": "Ruidos: Chirridos (frenos), Clacs (transmisión)." },
+            tech: { "turbo": "Turbo: Comprime aire usando gases de escape." }
+        };
+        function login() { const u = document.getElementById("username").value; if(!u) return; document.getElementById("login-overlay").style.display = "none"; document.getElementById("app-content").style.display = "flex"; document.getElementById("display-user").innerText = u.toUpperCase(); }
+        function consultarIA() {
+            const input = document.getElementById("pregunta"); const query = input.value.toLowerCase().trim(); if(!query) return;
+            document.getElementById("history").innerHTML += `<div class="message user-message">${input.value}</div>`;
+            let response = ""; let found = false;
+            for (let cat in knowledge) { for (let key in knowledge[cat]) { if (query.includes(key)) { response = `<span class="res-title">${key.toUpperCase()} ANALYSIS</span>${knowledge[cat][key]}`; found = true; break; } } if(found) break; }
+            if(!found) response = `<span class="res-title">ANALYSIS</span>Entiendo tu consulta. Basándome en la ingeniería, esto requiere una evaluación de parámetros.`;
+            setTimeout(() => responder(response, "Nexus AI"), 500); input.value = "";
+        }
+        function responder(html, firma) {
+            const h = document.getElementById("history");
+            h.innerHTML += `<div class="message ai-message"><div style="font-size:0.7rem; color:var(--blue); font-weight:600; margin-bottom:8px;">${firma}</div>${html}</div>`;
+            h.scrollTop = h.scrollHeight;
+        }
+    </script>
+</body>
+</html>
